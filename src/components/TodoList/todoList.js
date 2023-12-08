@@ -1,11 +1,16 @@
+import React from "react";
 import { memo } from "react";
-import { useGetRootTasksQuery } from "@/redux/TasksSlice/tasksSlice";
-import { useGetTaskByIdQuery } from "@/redux/TasksSlice/tasksSlice";
+import {
+  useGetRootTasksQuery,
+  useGetTaskByIdQuery,
+} from "@/redux/TasksSlice/tasksSlice";
 import { TodoItem } from "@/components/TodoItem";
 
-export const TodoList = memo(({ parent }) => {
-  const response =
-    parent === "root" ? useGetRootTasksQuery() : useGetTaskByIdQuery(parent);
+const TodoList = memo(({ parent }) => {
+  const rootTasksQuery = useGetRootTasksQuery();
+  const taskByIdQuery = useGetTaskByIdQuery(parent);
+
+  const response = parent === "root" ? rootTasksQuery : taskByIdQuery;
 
   return response.isLoading ? (
     <p>Loading...</p>
@@ -25,3 +30,7 @@ export const TodoList = memo(({ parent }) => {
     </ul>
   );
 });
+
+TodoList.displayName = "TodoList";
+
+export { TodoList };
