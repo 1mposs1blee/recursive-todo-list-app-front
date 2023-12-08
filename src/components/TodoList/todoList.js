@@ -4,13 +4,8 @@ import { useGetTaskByIdQuery } from "@/redux/TasksSlice/tasksSlice";
 import { TodoItem } from "@/components/TodoItem";
 
 export const TodoList = memo(({ parent }) => {
-  let response;
-
-  if (parent === "root") {
-    response = useGetRootTasksQuery();
-  } else {
-    response = useGetTaskByIdQuery(parent);
-  }
+  const response =
+    parent === "root" ? useGetRootTasksQuery() : useGetTaskByIdQuery(parent);
 
   return response.isLoading ? (
     <p>Loading...</p>
