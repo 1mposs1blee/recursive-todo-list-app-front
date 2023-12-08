@@ -10,13 +10,13 @@ const TodoList = memo(({ parent }) => {
   const rootTasksQuery = useGetRootTasksQuery();
   const taskByIdQuery = useGetTaskByIdQuery(parent);
 
-  const response = parent === "root" ? rootTasksQuery : taskByIdQuery;
+  const response = parent === "roots" ? rootTasksQuery : taskByIdQuery;
 
   return response.isLoading ? (
     <p>Loading...</p>
   ) : (
     <ul className="grid grid-flow-row gap-y-3 w-full max-w-xl justify-self-center">
-      {parent === "root"
+      {parent === "roots"
         ? response.data.map((todo, index) => (
             <li key={todo._id}>
               <TodoItem todo={todo} index={index} />

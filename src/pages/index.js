@@ -15,8 +15,8 @@ const Home = memo(function Home() {
 
       <div className="grid w-full max-w-3xl justify-self-center gap-y-7">
         <TodoListName />
-        <TodoForm parent="root" />
-        <TodoList parent="root" />
+        <TodoForm parent="roots" />
+        <TodoList parent="roots" />
       </div>
     </div>
   );
