@@ -2,9 +2,10 @@ import { memo } from "react";
 import Image from "next/image";
 import classNames from "classnames";
 
-export const RemoveButton = memo(function RemoveButton({ click }) {
+export const RemoveButton = memo(function RemoveButton({ click, disabled }) {
   return (
     <button
+      disabled={disabled}
       className={classNames(
         "justify-self-center flex justify-center items-center border border-red-500 transition-colors",
         "hover:bg-red-500 focus:bg-red-500 w-5 h-5 rounded-full group outline-none"

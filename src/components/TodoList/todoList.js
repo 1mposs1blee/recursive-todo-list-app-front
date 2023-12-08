@@ -12,15 +12,21 @@ export const TodoList = memo(({ parent }) => {
     response = useGetTaskByIdQuery(parent);
   }
 
-  return (
-    !response.isLoading && (
-      <ul className="grid grid-flow-row gap-y-3 w-full max-w-xl justify-self-center">
-        {response.data.map((todo) => (
-          <li key={todo._id}>
-            <TodoItem todo={todo} />
-          </li>
-        ))}
-      </ul>
-    )
+  return response.isLoading ? (
+    <p>Loading...</p>
+  ) : (
+    <ul className="grid grid-flow-row gap-y-3 w-full max-w-xl justify-self-center">
+      {parent === "root"
+        ? response.data.map((todo, index) => (
+            <li key={todo._id}>
+              <TodoItem todo={todo} index={index} />
+            </li>
+          ))
+        : response.data.subtasks.map((subtodo, index) => (
+            <li key={subtodo._id}>
+              <TodoItem todo={subtodo} index={index} />
+            </li>
+          ))}
+    </ul>
   );
 });

@@ -21,10 +21,30 @@ export const tasksApi = createApi({
         method: "POST",
         body: values,
       }),
-      invalidatesTags: ["Task "],
+      invalidatesTags: ["Task"],
+    }),
+    deleteTask: builder.mutation({
+      query: (id) => ({
+        url: `/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Task"],
+    }),
+    updateTask: builder.mutation({
+      query: (updatedTask) => ({
+        url: `/${updatedTask._id}`,
+        method: "PUT",
+        body: { title: updatedTask.title },
+      }),
+      invalidatesTags: ["Task"],
     }),
   }),
 });
 
-export const { useGetRootTasksQuery, useAddTaskMutation, useGetTaskByIdQuery } =
-  tasksApi;
+export const {
+  useGetRootTasksQuery,
+  useAddTaskMutation,
+  useGetTaskByIdQuery,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} = tasksApi;

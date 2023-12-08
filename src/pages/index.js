@@ -2,9 +2,7 @@ import { memo } from "react";
 import Head from "next/head";
 import { TodoList } from "@/components/TodoList";
 import { TodoListName } from "@/components/TodoListName";
-// import { TodoForm } from "components/todo-form";
-// import { TodoList } from "components/todo-list";
-// import { TodoListName } from "components/todolist-name";
+import { TodoForm } from "@/components/TodoForm";
 
 const Home = memo(function Home() {
   return (
@@ -17,9 +15,8 @@ const Home = memo(function Home() {
 
       <div className="grid w-full max-w-3xl justify-self-center gap-y-7">
         <TodoListName />
+        <TodoForm parent="root" />
         <TodoList parent="root" />
-        {/* <TodoForm /> */}
-        {/* <TodoList parent="root" /> */}
       </div>
     </div>
   );

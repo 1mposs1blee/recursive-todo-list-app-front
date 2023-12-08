@@ -1,35 +1,22 @@
-import { memo, useCallback, useState, useEffect, useContext } from "react";
+import { memo, useCallback, useState } from "react";
 import Image from "next/image";
 import classNames from "classnames";
 import { useForm } from "react-hook-form";
-
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from "@/redux/TasksSlice/tasksSlice";
 import { TodoForm } from "@/components/TodoForm";
 import { TodoList } from "@/components/TodoList";
 import { RemoveButton } from "@/components/RemoveButton";
 
-export const TodoItem = memo(function Todo({ todo }) {
-  //   const { put, remove } = useRWTransaction < Todo > "todos";
+export const TodoItem = memo(function Todo({ todo, index }) {
   const [readOnly, setReadOnly] = useState(true);
-  const [draggable, setDraggable] = useState(false);
+  // const [draggable, setDraggable] = useState(false);
   const [isSubTodosShown, setIsSubTodosShown] = useState(false);
 
-  //   const {
-  //     state: { draggableTodo, todos },
-  //     dispatch,
-  //   } = useContext(TodoStoreContext);
-
-  //   const { getAll } = useROTransaction < Todo > "todos";
-
-  //   useEffect(() => {
-  //     getAll(todo.id)
-  //       .then((todos = []) => {
-  //         dispatch({
-  //           type: TodoStoreActions.INIT_TODOS,
-  //           payload: { parent: todo.id, todos },
-  //         });
-  //       })
-  //       .catch(console.error);
-  //   }, [dispatch, getAll, todo.id]);
+  const [deleteTask, deleteTaskResult] = useDeleteTaskMutation();
+  const [updateTask, updateTaskResult] = useUpdateTaskMutation();
 
   const { register, getValues } = useForm({
     defaultValues: {
@@ -47,62 +34,59 @@ export const TodoItem = memo(function Todo({ todo }) {
     }
   }, []);
 
-  //   const saveChanges = useCallback(() => {
-  //     const nextTodo = { ...todo, desc: getValues("desc") };
-  //     setReadOnly(true);
-  //     put(nextTodo);
-  //     dispatch({ type: TodoStoreActions.UPDATE_TODO, payload: nextTodo });
-  //   }, [dispatch, getValues, put, todo]);
+  const saveChanges = useCallback(async () => {
+    if (todo.title.trim() === getValues("desc").trim()) {
+      return;
+    }
 
-  //   const deleteTodo = useCallback(() => {
-  //     remove(todo.id);
-  //     dispatch({
-  //       type: TodoStoreActions.REMOVE_TODO,
-  //       payload: { parent: todo.parent, self: todo.id },
-  //     });
-  //   }, [dispatch, remove, todo.id, todo.parent]);
+    await updateTask({ ...todo, title: getValues("desc") });
+  }, [getValues, todo, updateTask]);
 
-  //   const startDragging = useCallback(() => {
-  //     dispatch({ type: TodoStoreActions.SET_DRAGGABLE_TODO, payload: todo });
-  //   }, [dispatch, todo]);
+  const deleteTodo = useCallback(async () => {
+    await deleteTask(todo._id);
+  }, [todo._id, deleteTask]);
 
-  //   const endDragging = useCallback(() => {
-  //     dispatch({ type: TodoStoreActions.SET_DRAGGABLE_TODO, payload: null });
-  //   }, [dispatch]);
+  // const startDragging = useCallback(() => {
+  //   dispatch({ type: TodoStoreActions.SET_DRAGGABLE_TODO, payload: todo });
+  // }, [dispatch, todo]);
 
-  const dragEnter = useCallback((event) => {
-    event.preventDefault();
-  }, []);
+  // const endDragging = useCallback(() => {
+  //   dispatch({ type: TodoStoreActions.SET_DRAGGABLE_TODO, payload: null });
+  // }, [dispatch]);
 
-  const dragOver = useCallback((event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
+  // const dragEnter = useCallback((event) => {
+  //   event.preventDefault();
+  // }, []);
 
-  const dragLeave = useCallback((event) => {
-    event.preventDefault();
-  }, []);
+  // const dragOver = useCallback((event) => {
+  //   event.preventDefault();
+  //   event.dataTransfer.dropEffect = "move";
+  // }, []);
 
-  //   const drop = useCallback(
-  //     async (event) => {
-  //       event.preventDefault();
+  // const dragLeave = useCallback((event) => {
+  //   event.preventDefault();
+  // }, []);
 
-  //       if (
-  //         draggableTodo &&
-  //         todo.order !== draggableTodo.order &&
-  //         todo.parent === draggableTodo.parent
-  //       ) {
-  //         const currentTodo = { ...draggableTodo, order: todo.order };
-  //         const targetTodo = { ...todo, order: draggableTodo.order };
-  //         await put(currentTodo);
-  //         await put(targetTodo);
-  //         dispatch({ type: TodoStoreActions.UPDATE_TODO, payload: currentTodo });
-  //         dispatch({ type: TodoStoreActions.UPDATE_TODO, payload: targetTodo });
-  //       }
-  //     },
+  // const drop = useCallback(
+  //   async (event) => {
+  //     event.preventDefault();
 
-  //     [dispatch, draggableTodo, put, todo]
-  //   );
+  //     if (
+  //       draggableTodo &&
+  //       todo.order !== draggableTodo.order &&
+  //       todo.parent === draggableTodo.parent
+  //     ) {
+  //       const currentTodo = { ...draggableTodo, order: todo.order };
+  //       const targetTodo = { ...todo, order: draggableTodo.order };
+  //       await put(currentTodo);
+  //       await put(targetTodo);
+  //       dispatch({ type: TodoStoreActions.UPDATE_TODO, payload: currentTodo });
+  //       dispatch({ type: TodoStoreActions.UPDATE_TODO, payload: targetTodo });
+  //     }
+  //   },
+
+  //   [dispatch, draggableTodo, put, todo]
+  // );
 
   const toggleSubTodos = useCallback(() => {
     setIsSubTodosShown((previous) => !previous);
@@ -113,17 +97,17 @@ export const TodoItem = memo(function Todo({ todo }) {
       className={classNames(
         "grid grid-flow-row items-center gap-y-3 rounded-md p-2"
       )}
-      //   draggable={draggable}
-      //   onDragStartCapture={startDragging}
-      //   onDragEndCapture={endDragging}
-      //   onDragEnterCapture={dragEnter}
-      //   onDragOverCapture={dragOver}
-      //   onDragLeaveCapture={dragLeave}
-      //   onDropCapture={drop}
+      // draggable={draggable}
+      // onDragStartCapture={startDragging}
+      // onDragEndCapture={endDragging}
+      // onDragEnterCapture={dragEnter}
+      // onDragOverCapture={dragOver}
+      // onDragLeaveCapture={dragLeave}
+      // onDropCapture={drop}
     >
       <div className="grid grid-flow-col gap-x-2 items-center">
         <div className="justify-self-center w-10">
-          {/* <span className="truncate">{todos[todo.id]?.length || ""}</span> */}
+          <span className="truncate">{todo.subtasks.length || ""}</span>
           <button
             className={classNames("ml-2 transform transition-transform", {
               "rotate-0": !isSubTodosShown,
@@ -151,29 +135,35 @@ export const TodoItem = memo(function Todo({ todo }) {
           })}
           onClick={startEditing}
           onKeyUp={toggleReadOnlyOnPressEnter}
-          //   onBlur={saveChanges}
+          onBlur={saveChanges}
           readOnly={readOnly}
         />
 
-        {/* <RemoveButton click={deleteTodo} /> */}
+        <RemoveButton
+          click={deleteTodo}
+          disabled={deleteTaskResult.isLoading || updateTaskResult.isLoading}
+        />
 
         <Image
           className="cursor-grab"
-          //   draggable={false}
-          //   onMouseEnter={() => setDraggable(true)}
-          //   onMouseLeave={() => setDraggable(false)}
+          // draggable={false}
+          // onMouseEnter={() => setDraggable(true)}
+          // onMouseLeave={() => setDraggable(false)}
           style={{ width: "15px", height: "15px" }}
           width="15"
           height="15"
           src="/drag.svg"
           alt="drag indicator"
         />
+        {(deleteTaskResult.isLoading || updateTaskResult.isLoading) && (
+          <p>Loading...</p>
+        )}
       </div>
 
       {isSubTodosShown && (
         <div className="grid grid-flow-row pl-10 gap-y-3">
           <TodoForm parent={todo._id} />
-          <TodoList parent={todo._id} shouldRunUseEffect={false} />
+          <TodoList parent={todo._id} />
         </div>
       )}
     </div>
